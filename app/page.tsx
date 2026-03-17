@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import { Container, Button, Alert, Card, ListGroup, Row, Col, ButtonGroup, Dropdown, Table } from "react-bootstrap";
 import Link from "next/link";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faThLarge, faList, faEye, faChartBar, faTrashAlt, faSort, faFileAlt, faEdit } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faThLarge, faList, faEye, faChartBar, faTrashAlt, faSort, faFileAlt, faEdit, faChartPie } from '@fortawesome/free-solid-svg-icons';
 
 interface Question {
   id: string;
@@ -30,6 +30,7 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [viewType, setViewType] = useState<ViewType>("card");
   const [sortCriteria, setSortCriteria] = useState<SortCriteria>("date-desc");
+  const [totalResponses, setTotalResponses] = useState(0);
 
   const fetchForms = async () => {
     try {
@@ -43,6 +44,14 @@ export default function Home() {
         createdAt: form.createdAt || new Date(parseInt(form.id.substring(0, 8), 16) * 1000).toISOString(),
       }));
       setForms(formsWithDate);
+
+      // Fetch total responses
+      const responsesCountResponse = await fetch('/api/responses/count');
+      if (!responsesCountResponse.ok) {
+        throw new Error(`HTTP error! status: ${responsesCountResponse.status}`);
+      }
+      const responsesCountData = await responsesCountResponse.json();
+      setTotalResponses(responsesCountData.totalResponses);
     } catch (e: any) {
       setError(e.message || "Error al cargar los formularios.");
     } finally {
@@ -139,6 +148,19 @@ export default function Home() {
                 <div>
                   <Card.Title className="mb-0">Total de Formularios</Card.Title>
                   <Card.Text className="fs-2 fw-bold">{forms.length}</Card.Text>
+                </div>
+              </div>
+            </Card.Body>
+          </Card>
+        </Col>
+        <Col md={4}>
+          <Card className="shadow-sm">
+            <Card.Body>
+              <div className="d-flex align-items-center">
+                <FontAwesomeIcon icon={faChartPie} size="2x" className="text-success me-3" />
+                <div>
+                  <Card.Title className="mb-0">Total de Respuestas</Card.Title>
+                  <Card.Text className="fs-2 fw-bold">{totalResponses}</Card.Text>
                 </div>
               </div>
             </Card.Body>

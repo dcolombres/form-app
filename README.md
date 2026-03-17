@@ -7,7 +7,7 @@ Este es un proyecto de [Next.js](https://nextjs.org) inicializado con [`create-n
 *   **Creación de Formularios:** Interfaz intuitiva para diseñar nuevos formularios con diferentes tipos de preguntas.
 *   **Gestión de Formularios:** Visualización de todos los formularios creados en formato de tarjeta o lista, con opciones de ordenamiento por título o fecha de creación.
 *   **Visualización de Formularios:** Acceso a la vista pública de cada formulario para que los usuarios puedan completarlos.
-*   **Análisis de Respuestas:** Consulta de las respuestas enviadas para cada formulario, con visualizaciones básicas.
+*   **Análisis de Respuestas:** Consulta de las respuestas enviadas para cada formulario, con visualizaciones básicas y un resumen del total de respuestas en el dashboard.
 *   **Eliminación de Formularios:** Funcionalidad para eliminar formularios existentes, incluyendo todas sus respuestas asociadas.
 *   **Edición de Formularios:** Permite modificar el título y las preguntas de formularios existentes.
 *   **Persistencia de Datos:** Los formularios y sus respuestas se almacenan localmente en archivos JSON dentro del directorio `data/`.
@@ -70,6 +70,7 @@ A continuación, se presenta una descripción de los directorios y archivos más
     *   `app/page.tsx`: La página de inicio que lista y gestiona los formularios.
     *   `app/layout.tsx`: El layout principal de la aplicación, incluyendo la barra de navegación.
     *   `app/api/forms/`: Rutas de API para la gestión de formularios (creación, lectura, eliminación).
+    *   `app/api/responses/count/`: Ruta de API para obtener el conteo total de respuestas.
     *   `app/create-form/`: Página para la creación de nuevos formularios.
     *   `app/forms/[formId]/`: Página para visualizar un formulario específico.
     *   `app/edit-form/[formId]/`: Página para editar un formulario específico.
