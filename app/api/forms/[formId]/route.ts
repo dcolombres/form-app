@@ -2,16 +2,19 @@ import { NextResponse } from 'next/server';
 import fs from 'fs/promises';
 import path from 'path';
 
-export async function GET(request: Request, { params }: { params: { formId: string } }) {
+export async function GET(request: Request, context: { params: Promise<{ formId: string }> | { formId: string } }) {
   try {
-    const { formId } = params;
+    const resolvedParams = await context.params;
+    const { formId } = resolvedParams;
     const filePath = path.join(process.cwd(), 'data', 'forms', `${formId}.json`);
+    console.log(`Attempting to read form file: ${filePath}`);
 
     try {
       const fileContent = await fs.readFile(filePath, 'utf-8');
       const form = JSON.parse(fileContent);
       return NextResponse.json(form);
     } catch (readError) {
+      console.error(`Error reading file ${filePath}:`, readError);
       if ((readError as NodeJS.ErrnoException).code === 'ENOENT') {
         return NextResponse.json({ message: 'Formulario no encontrado' }, { status: 404 });
       }
@@ -23,9 +26,10 @@ export async function GET(request: Request, { params }: { params: { formId: stri
   }
 }
 
-export async function PUT(request: Request, { params }: { params: { formId: string } }) {
+export async function PUT(request: Request, context: { params: Promise<{ formId: string }> | { formId: string } }) {
   try {
-    const { formId } = params;
+    const resolvedParams = await context.params;
+    const { formId } = resolvedParams;
     const updatedFormDefinition = await request.json();
 
     if (!formId || formId !== updatedFormDefinition.id) {
@@ -52,9 +56,10 @@ export async function PUT(request: Request, { params }: { params: { formId: stri
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: { formId: string } }) {
+export async function DELETE(request: Request, context: { params: Promise<{ formId: string }> | { formId: string } }) {
   try {
-    const { formId } = params;
+    const resolvedParams = await context.params;
+    const { formId } = resolvedParams;
     const filePath = path.join(process.cwd(), 'data', 'forms', `${formId}.json`);
     const responsesDirectory = path.join(process.cwd(), 'data', 'responses', formId);
 

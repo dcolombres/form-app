@@ -2,10 +2,9 @@ import { NextResponse } from 'next/server';
 import fs from 'fs/promises';
 import path from 'path';
 
-export async function GET(request: Request, context: { params: { formId: string } }) {
-  // Try awaiting context.params directly as suggested by the error message
+export async function GET(request: Request, context: { params: Promise<{ formId: string }> | { formId: string } }) {
   const resolvedParams = await context.params;
-  const formId = resolvedParams.formId;
+  const { formId } = resolvedParams;
 
   try {
     const formResponsesDir = path.join(process.cwd(), 'data', 'responses', formId);

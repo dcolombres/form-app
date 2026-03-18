@@ -1,0 +1,83 @@
+{
+  "id": "facac134-476f-4d4c-88e2-10ff60643fa5",
+  "title": "Sobre Futbol",
+  "questions": [
+    {
+      "id": "ac1023fd-7d90-402d-ae76-81d7f8e0dd18",
+      "text": "¿Cuál  es tu Club de Futbol Argentino favorito?",
+      "type": "radio",
+      "options": [
+        "Boca Juniors",
+        "River Plate",
+        "Independiente",
+        "Racing Club",
+        "San Lorenzo",
+        "Vélez Sarsfield",
+        "Newell's Old Boys",
+        "Rosario Central",
+        "Argentinos Juniors",
+        "Estudiantes de La Plata",
+        "Gimnasia y Esgrima La Plata",
+        "Huracán",
+        "Banfield",
+        "Lanús",
+        "Talleres de Córdoba",
+        "Otro"
+      ]
+    },
+    {
+      "id": "31b35287-55cc-4473-a681-9180c904d131",
+      "text": "¿Cuál es tu Club de Futbol español favorito?",
+      "type": "radio",
+      "options": [
+        "Real Madrid",
+        "FC Barcelona",
+        "Atlético de Madrid",
+        "Sevilla",
+        "Valencia",
+        "Athletic Club (Bilbao)",
+        "Villarreal",
+        "Real Sociedad",
+        "Real Betis",
+        "Atlético de Bilbao",
+        "Celta de Vigo",
+        "Real Valladolid",
+        "Espanyol",
+        "Mallorca",
+        "Deportivo La Coruña",
+        "Zaragoza",
+        "Otro"
+      ]
+    },
+    {
+      "id": "601b8117-fd24-4ea1-806e-2091854b89ba",
+      "text": "Indicá tu fecha de nacimiento",
+      "type": "date"
+    },
+    {
+      "id": "a706a397-b0e8-4e9b-ae40-c025851f7127",
+      "text": "Nombre",
+      "type": "text",
+      "fixed": true
+    },
+    {
+      "id": "f8d8832d-03a7-4dbe-ba9a-b00a534a5cff",
+      "text": "Apellido",
+      "type": "text",
+      "fixed": true
+    },
+    {
+      "id": "36b6ebbc-0be2-4b26-9c38-39f6853f9980",
+      "text": "Email",
+      "type": "text",
+      "fixed": true
+    },
+    {
+      "id": "5799caa6-9b11-45dc-8f96-4cd36f15e803",
+      "text": "Teléfono",
+      "type": "text",
+      "fixed": true
+    }
+  ],
+  "createdAt": "2026-03-18T13:26:11.508Z"
+}
