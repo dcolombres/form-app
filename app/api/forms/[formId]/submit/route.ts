@@ -3,8 +3,8 @@ import fs from 'fs/promises';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 
-export async function POST(request: Request, { params }: { params: { formId: string } }) {
-  const { formId } = params;
+export async function POST(request: Request, context: { params: Promise<{ formId: string }> | { formId: string } }) {
+  const { formId } = await context.params;
 
   try {
     console.log('API Submit: Received formId:', formId);

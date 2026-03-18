@@ -12,7 +12,7 @@ export async function GET(request: Request, context: { params: Promise<{ formId:
     // Check if the directory exists
     try {
       await fs.access(formResponsesDir);
-    } catch (error) {
+    } catch {
       // If directory does not exist, no responses yet
       return NextResponse.json([]);
     }

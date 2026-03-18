@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import AppNavbar from "../components/AppNavbar"; // Import the Navbar component
+import { Toaster } from "sonner"; // Import Toaster
+import { AuthProvider } from "@/context/AuthContext"; // Import AuthProvider
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,8 +31,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-primary-light text-primary-dark min-h-screen`}
       >
-        <AppNavbar className="mb-4" /> {/* Render the Navbar here */}
-        {children}
+        <AuthProvider>
+          <Toaster position="top-right" richColors closeButton />
+          <AppNavbar className="mb-4" /> {/* Render the Navbar here */}
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

@@ -48,8 +48,12 @@ export async function POST(request: Request) {
       createdAt: new Date().toISOString(),
     };
 
-    const filePath = path.join(process.cwd(), 'data', 'forms', `${formId}.json`);
+    const formsDirectory = path.join(process.cwd(), 'data', 'forms');
+    const filePath = path.join(formsDirectory, `${formId}.json`);
     console.log('Attempting to save form to:', filePath);
+
+    // Ensure the directory exists
+    await fs.mkdir(formsDirectory, { recursive: true });
 
     await fs.writeFile(filePath, JSON.stringify(formToSave, null, 2));
     console.log('Form saved successfully:', formId);
