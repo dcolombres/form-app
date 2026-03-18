@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid'; // For unique IDs
 import { useRouter } from 'next/navigation'; // For redirection
 
 // Define question types
-type QuestionType = "text" | "textarea" | "radio" | "checkbox";
+type QuestionType = "text" | "textarea" | "radio" | "checkbox" | "date";
 
 // Define question structure
 interface Question {
@@ -137,6 +137,7 @@ export default function CreateFormPage() {
                 <option value="textarea">Párrafo</option>
                 <option value="radio">Opción Múltiple (una respuesta)</option>
                 <option value="checkbox">Casillas de Verificación (múltiples respuestas)</option>
+                <option value="date">Fecha</option>
               </Form.Select>
             </Form.Group>
           </Col>

@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useParams } from 'next/navigation'; // Import useParams
 
 // Define question types
-type QuestionType = "text" | "textarea" | "radio" | "checkbox";
+type QuestionType = "text" | "textarea" | "radio" | "checkbox" | "date";
 
 // Define question structure
 interface Question {
@@ -197,6 +197,7 @@ export default function EditFormPage() {
                 <option value="textarea">Párrafo</option>
                 <option value="radio">Opción Múltiple (una respuesta)</option>
                 <option value="checkbox">Casillas de Verificación (múltiples respuestas)</option>
+                <option value="date">Fecha</option>
               </Form.Select>
             </Form.Group>
           </Col>

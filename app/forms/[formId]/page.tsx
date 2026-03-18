@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 interface Question {
   id: string;
   text: string;
-  type: string;
+  type: "text" | "textarea" | "radio" | "checkbox" | "date"; // Updated QuestionType
   options?: string[];
   fixed?: boolean;
 }
@@ -237,12 +237,17 @@ export default function PublicFormPage() {
                     label={option}
                     name={question.id}
                     value={option}
-                    checked={formData[question.id]?.includes(option)}
-                    onChange={(e) => handleChange(question.id, e.target.value, question.type)}
-                    required={question.fixed}
                   />
                 ))}
               </div>
+            )}
+            {question.type === "date" && (
+              <Form.Control
+                type="date"
+                value={formData[question.id] || ''}
+                onChange={(e) => handleChange(question.id, e.target.value, question.type)}
+                required={question.fixed}
+              />
             )}
           </Form.Group>
         ))}

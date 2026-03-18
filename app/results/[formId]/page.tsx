@@ -9,7 +9,7 @@ import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
 interface Question {
   id: string;
   text: string;
-  type: string;
+  type: "text" | "textarea" | "radio" | "checkbox" | "date";
   options?: string[];
   fixed?: boolean;
 }

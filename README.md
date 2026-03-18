@@ -4,7 +4,7 @@ Este es un proyecto de [Next.js](https://nextjs.org) inicializado con [`create-n
 
 ## Funcionalidades Principales
 
-*   **Creación de Formularios:** Interfaz intuitiva para diseñar nuevos formularios con diferentes tipos de preguntas.
+*   **Creación de Formularios:** Interfaz intuitiva para diseñar nuevos formularios con diferentes tipos de preguntas, incluyendo campos de texto, párrafos, opciones múltiples, casillas de verificación y fechas.
 *   **Gestión de Formularios:** Visualización de todos los formularios creados en formato de tarjeta o lista, con opciones de ordenamiento por título o fecha de creación.
 *   **Visualización de Formularios:** Acceso a la vista pública de cada formulario para que los usuarios puedan completarlos.
 *   **Análisis de Respuestas:** Consulta de las respuestas enviadas para cada formulario, con visualizaciones básicas y un resumen del total de respuestas en el dashboard.
