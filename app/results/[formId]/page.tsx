@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { Container, Alert, Table, Button } from "react-bootstrap";
 import { useParams } from 'next/navigation';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
 
 interface Question {
   id: string;
@@ -146,6 +148,7 @@ export default function ResultsPage() {
       ) : (
         <>
           <Button variant="success" onClick={exportToCsv} className="mb-3">
+            <FontAwesomeIcon icon={faFileCsv} className="me-2" />
             Exportar a CSV
           </Button>
           <Table striped bordered hover responsive>

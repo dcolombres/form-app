@@ -10,6 +10,7 @@ Este es un proyecto de [Next.js](https://nextjs.org) inicializado con [`create-n
 *   **Análisis de Respuestas:** Consulta de las respuestas enviadas para cada formulario, con visualizaciones básicas y un resumen del total de respuestas en el dashboard.
 *   **Eliminación de Formularios:** Funcionalidad para eliminar formularios existentes, incluyendo todas sus respuestas asociadas.
 *   **Edición de Formularios:** Permite modificar el título y las preguntas de formularios existentes.
+*   **Exportación de Resultados:** Permite exportar las respuestas de un formulario a un archivo CSV para su análisis externo.
 *   **Persistencia de Datos:** Los formularios y sus respuestas se almacenan localmente en archivos JSON dentro del directorio `data/`.
 
 ## Empezando (Getting Started)
