@@ -12,7 +12,7 @@ export async function GET(request: Request, context: { params: Promise<{ formId:
     });
 
     // Extract the 'data' object from each response
-    const responseData = responses.map(r => r.data);
+    const responseData = responses.map((r: { data: any }) => r.data);
 
     return NextResponse.json(responseData);
   } catch (error) {
