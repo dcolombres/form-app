@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma'; // Import Prisma Client
-import { PrismaClient } from '@prisma/client'; // Import PrismaClient type
+import { Prisma } from '@prisma/client'; // Import Prisma namespace
 
 export async function GET(request: Request, context: { params: Promise<{ formId: string }> | { formId: string } }) {
   try {
@@ -34,7 +34,7 @@ export async function PUT(request: Request, context: { params: Promise<{ formId:
     }
 
     // Use a transaction to update the form and its questions
-    const updatedForm = await prisma.$transaction(async (tx: PrismaClient) => {
+    const updatedForm = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       // 1. Update the form's title
       const form = await tx.form.update({
         where: { id: formId },
