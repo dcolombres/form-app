@@ -7,9 +7,12 @@ declare global {
   var prisma: PrismaClient | undefined;
 }
 
+import { Pool } from 'pg';
+
 function createPrismaClient() {
   const connectionString = process.env.DATABASE_URL!;
-  const adapter = new PrismaPg({ connectionString });
+  const pool = new Pool({ connectionString });
+  const adapter = new PrismaPg(pool);
   return new PrismaClient({ adapter });
 }
 
