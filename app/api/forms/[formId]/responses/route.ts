@@ -1,33 +1,22 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs/promises';
-import path from 'path';
+import prisma from '@/lib/prisma'; // Import Prisma Client
 
 export async function GET(request: Request, context: { params: Promise<{ formId: string }> | { formId: string } }) {
-  const resolvedParams = await context.params;
-  const { formId } = resolvedParams;
-
   try {
-    const formResponsesDir = path.join(process.cwd(), 'data', 'responses', formId);
+    const resolvedParams = await context.params;
+    const { formId } = resolvedParams;
 
-    // Check if the directory exists
-    try {
-      await fs.access(formResponsesDir);
-    } catch {
-      // If directory does not exist, no responses yet
-      return NextResponse.json([]);
-    }
+    const responses = await prisma.response.findMany({
+      where: { formId: formId },
+      select: { data: true }, // Only select the JSON data of the response
+    });
 
-    const filenames = await fs.readdir(formResponsesDir);
+    // Extract the 'data' object from each response
+    const responseData = responses.map(r => r.data);
 
-    const responses = await Promise.all(filenames.map(async (filename) => {
-      const filePath = path.join(formResponsesDir, filename);
-      const fileContent = await fs.readFile(filePath, 'utf-8');
-      return JSON.parse(fileContent);
-    }));
-
-    return NextResponse.json(responses);
+    return NextResponse.json(responseData);
   } catch (error) {
-    console.error('Error fetching responses:', error);
-    return NextResponse.json({ message: 'Error fetching responses' }, { status: 500 });
+    console.error('Error fetching responses from DB:', error);
+    return NextResponse.json({ message: 'Error al cargar las respuestas.' }, { status: 500 });
   }
 }

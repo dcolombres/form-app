@@ -161,10 +161,12 @@ export default function Home() {
             </span>
           </OverlayTrigger>
         </h1>
-        <Button as={Link} href="/create-form" variant="primary" className="shadow-sm">
-          <FontAwesomeIcon icon={faPlus} className="me-2" />
-          Crear Formulario
-        </Button>
+        <Link href="/create-form" passHref legacyBehavior>
+          <Button as="a" variant="primary" className="shadow-sm">
+            <FontAwesomeIcon icon={faPlus} className="me-2" />
+            Crear Formulario
+          </Button>
+        </Link>
       </div>
 
       <Row className="mb-4 g-4">
@@ -205,10 +207,12 @@ export default function Home() {
           <FontAwesomeIcon icon={faFileAlt} size="3x" className="mb-3 text-muted opacity-50" />
           <h2 className="h4">No hay formularios creados</h2>
           <p className="text-muted mb-4">¡Crea tu primer formulario para empezar a recopilar datos!</p>
-          <Button as={Link} href="/create-form" variant="primary" size="lg">
-            <FontAwesomeIcon icon={faPlus} className="me-2" />
-            Crear Nuevo Formulario
-          </Button>
+          <Link href="/create-form" passHref legacyBehavior>
+            <Button as="a" variant="primary" size="lg">
+              <FontAwesomeIcon icon={faPlus} className="me-2" />
+              Crear Nuevo Formulario
+            </Button>
+          </Link>
         </div>
       ) : (
         <Card className="shadow-sm border-0 overflow-hidden">
@@ -258,19 +262,25 @@ export default function Home() {
                         <div className="mt-auto pt-3 border-top">
                           <div className="d-flex flex-wrap gap-2 mb-2">
                             <OverlayTrigger overlay={renderTooltip("Ver formulario público")}>
-                              <Button as={Link} href={`/forms/${form.id}`} variant="outline-primary" size="sm" className="flex-grow-1">
-                                <FontAwesomeIcon icon={faEye} />
-                              </Button>
+                              <Link href={`/forms/${form.id}`} passHref legacyBehavior>
+                                <Button as="a" variant="outline-primary" size="sm" className="flex-grow-1">
+                                  <FontAwesomeIcon icon={faEye} />
+                                </Button>
+                              </Link>
                             </OverlayTrigger>
                             <OverlayTrigger overlay={renderTooltip("Editar diseño")}>
-                              <Button as={Link} href={`/edit-form/${form.id}`} variant="outline-info" size="sm" className="flex-grow-1 text-info">
-                                <FontAwesomeIcon icon={faEdit} />
-                              </Button>
+                              <Link href={`/edit-form/${form.id}`} passHref legacyBehavior>
+                                <Button as="a" variant="outline-info" size="sm" className="flex-grow-1 text-info">
+                                  <FontAwesomeIcon icon={faEdit} />
+                                </Button>
+                              </Link>
                             </OverlayTrigger>
                             <OverlayTrigger overlay={renderTooltip("Ver respuestas")}>
-                              <Button as={Link} href={`/results/${form.id}`} variant="outline-secondary" size="sm" className="flex-grow-1">
-                                <FontAwesomeIcon icon={faChartBar} />
-                              </Button>
+                              <Link href={`/results/${form.id}`} passHref legacyBehavior>
+                                <Button as="a" variant="outline-secondary" size="sm" className="flex-grow-1">
+                                  <FontAwesomeIcon icon={faChartBar} />
+                                </Button>
+                              </Link>
                             </OverlayTrigger>
                           </div>
                           <OverlayTrigger overlay={renderTooltip("Eliminar permanentemente")}>
@@ -307,19 +317,25 @@ export default function Home() {
                       <td className="pe-4 text-center">
                         <ButtonGroup className="shadow-sm btn-group-sm">
                           <OverlayTrigger overlay={renderTooltip("Ver")}>
-                            <Button as={Link} href={`/forms/${form.id}`} variant="outline-primary">
-                              <FontAwesomeIcon icon={faEye} />
-                            </Button>
+                            <Link href={`/forms/${form.id}`} passHref legacyBehavior>
+                              <Button as="a" variant="outline-primary">
+                                <FontAwesomeIcon icon={faEye} />
+                              </Button>
+                            </Link>
                           </OverlayTrigger>
                           <OverlayTrigger overlay={renderTooltip("Editar")}>
-                            <Button as={Link} href={`/edit-form/${form.id}`} variant="outline-info">
-                              <FontAwesomeIcon icon={faEdit} />
-                            </Button>
+                            <Link href={`/edit-form/${form.id}`} passHref legacyBehavior>
+                              <Button as="a" variant="outline-info">
+                                <FontAwesomeIcon icon={faEdit} />
+                              </Button>
+                            </Link>
                           </OverlayTrigger>
                           <OverlayTrigger overlay={renderTooltip("Resultados")}>
-                            <Button as={Link} href={`/results/${form.id}`} variant="outline-secondary">
-                              <FontAwesomeIcon icon={faChartBar} />
-                            </Button>
+                            <Link href={`/results/${form.id}`} passHref legacyBehavior>
+                              <Button as="a" variant="outline-secondary">
+                                <FontAwesomeIcon icon={faChartBar} />
+                              </Button>
+                            </Link>
                           </OverlayTrigger>
                           <OverlayTrigger overlay={renderTooltip("Eliminar")}>
                             <Button variant="outline-danger" onClick={() => handleDeleteForm(form.id, form.title)}>

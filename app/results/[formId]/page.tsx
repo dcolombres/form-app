@@ -45,24 +45,41 @@ export default function ResultsPage() {
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!formId) {
+        setError("ID de formulario no proporcionado.");
+        setLoading(false);
+        return;
+      }
+      console.log(`Fetching data for formId: ${formId}`);
+      setLoading(true);
+      setError(null);
       try {
+        // Fetch form definition
+        console.log(`Fetching form definition from /api/forms/${formId}`);
         const formRes = await fetch(`/api/forms/${formId}`);
         if (!formRes.ok) {
+          console.error(`Error fetching form definition: ${formRes.status} - ${formRes.statusText}`);
           throw new Error(`Error al obtener definición: ${formRes.statusText}`);
         }
         const formDef: FormDefinition = await formRes.json();
         setFormDefinition(formDef);
+        console.log("Form definition fetched successfully:", formDef);
 
+        // Fetch responses
+        console.log(`Fetching responses from /api/forms/${formId}/responses`);
         const responsesRes = await fetch(`/api/forms/${formId}/responses`);
         if (!responsesRes.ok) {
+          console.error(`Error fetching responses: ${responsesRes.status} - ${responsesRes.statusText}`);
           throw new Error(`Error al obtener respuestas: ${responsesRes.statusText}`);
         }
         const fetchedResponses: FormResponse[] = await responsesRes.json();
         setResponses(fetchedResponses);
+        console.log("Responses fetched successfully:", fetchedResponses);
 
       } catch (e: unknown) {
         const message = e instanceof Error ? e.message : "Error al cargar los resultados.";
         setError(message);
+        console.error("Full error object:", e);
         toast.error("No se pudieron cargar los resultados del servidor.");
       } finally {
         setLoading(false);

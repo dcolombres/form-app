@@ -1,67 +1,54 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs/promises';
-import path from 'path';
+import prisma from '@/lib/prisma'; // Import Prisma Client
 
 export async function GET() {
   try {
-    const formsDirectory = path.join(process.cwd(), 'data', 'forms');
-    console.log('Attempting to read forms from directory:', formsDirectory);
-
-    let filenames: string[] = [];
-    try {
-      filenames = await fs.readdir(formsDirectory);
-      console.log('Found filenames:', filenames);
-    } catch (readDirError) {
-      if ((readDirError as NodeJS.ErrnoException).code === 'ENOENT') {
-        console.log('Forms directory not found, returning empty array.');
-        return NextResponse.json([]);
-      }
-      throw readDirError; // Re-throw other errors
-    }
-
-    const forms = await Promise.all(filenames.map(async (filename) => {
-      const filePath = path.join(formsDirectory, filename);
-      const fileContent = await fs.readFile(filePath, 'utf-8');
-      console.log(`Content of ${filename}:`, fileContent);
-      return JSON.parse(fileContent);
-    }));
-
+    const forms = await prisma.form.findMany({
+      include: {
+        questions: true, // Include questions related to each form
+      },
+      orderBy: {
+        createdAt: 'desc', // Order by creation date, newest first
+      },
+    });
     return NextResponse.json(forms);
   } catch (error) {
-    console.error('Error fetching forms:', error);
-    return NextResponse.json({ message: 'Error fetching forms' }, { status: 500 });
+    console.error('Error fetching forms from DB:', error);
+    return NextResponse.json({ message: 'Error al cargar los formularios.' }, { status: 500 });
   }
 }
 
 export async function POST(request: Request) {
   try {
-    const formDefinition = await request.json();
-    const formId = formDefinition.id; // Assuming formDefinition already has an ID
+    const { id, title, questions } = await request.json();
 
-    if (!formId) {
-      return NextResponse.json({ message: 'Form ID is missing' }, { status: 400 });
+    if (!id || !title || !questions) {
+      return NextResponse.json({ message: 'Faltan datos del formulario (id, title, questions).' }, { status: 400 });
     }
 
-    // Add createdAt timestamp
-    const formToSave = {
-      ...formDefinition,
-      createdAt: new Date().toISOString(),
-    };
+    const newForm = await prisma.form.create({
+      data: {
+        id,
+        title,
+        questions: {
+          create: questions.map((q: any) => ({
+            id: q.id,
+            text: q.text,
+            type: q.type,
+            options: q.options || [],
+            fixed: q.fixed || false,
+          })),
+        },
+      },
+      include: {
+        questions: true, // Return the created form with its questions
+      },
+    });
 
-    const formsDirectory = path.join(process.cwd(), 'data', 'forms');
-    const filePath = path.join(formsDirectory, `${formId}.json`);
-    console.log('Attempting to save form to:', filePath);
-
-    // Ensure the directory exists
-    await fs.mkdir(formsDirectory, { recursive: true });
-
-    await fs.writeFile(filePath, JSON.stringify(formToSave, null, 2));
-    console.log('Form saved successfully:', formId);
-
-    return NextResponse.json({ message: 'Form saved successfully', formId });
+    return NextResponse.json({ message: 'Formulario guardado exitosamente', formId: newForm.id });
   } catch (error) {
-    console.error('Error saving form:', error);
-    return NextResponse.json({ message: 'Error saving form' }, { status: 500 });
+    console.error('Error saving form to DB:', error);
+    return NextResponse.json({ message: 'Error al guardar el formulario.' }, { status: 500 });
   }
 }
 

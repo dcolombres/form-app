@@ -1,28 +1,24 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs/promises';
-import path from 'path';
+import prisma from '@/lib/prisma'; // Import Prisma Client
 
 export async function GET(request: Request, context: { params: Promise<{ formId: string }> | { formId: string } }) {
   try {
     const resolvedParams = await context.params;
     const { formId } = resolvedParams;
-    const filePath = path.join(process.cwd(), 'data', 'forms', `${formId}.json`);
-    console.log(`Attempting to read form file: ${filePath}`);
 
-    try {
-      const fileContent = await fs.readFile(filePath, 'utf-8');
-      const form = JSON.parse(fileContent);
-      return NextResponse.json(form);
-    } catch (readError) {
-      console.error(`Error reading file ${filePath}:`, readError);
-      if ((readError as NodeJS.ErrnoException).code === 'ENOENT') {
-        return NextResponse.json({ message: 'Formulario no encontrado' }, { status: 404 });
-      }
-      throw readError;
+    const form = await prisma.form.findUnique({
+      where: { id: formId },
+      include: { questions: true },
+    });
+
+    if (!form) {
+      return NextResponse.json({ message: 'Formulario no encontrado' }, { status: 404 });
     }
+
+    return NextResponse.json(form);
   } catch (error) {
-    console.error('Error fetching form:', error);
-    return NextResponse.json({ message: 'Error al obtener el formulario' }, { status: 500 });
+    console.error('Error fetching form from DB:', error);
+    return NextResponse.json({ message: 'Error al obtener el formulario.' }, { status: 500 });
   }
 }
 
@@ -30,29 +26,44 @@ export async function PUT(request: Request, context: { params: Promise<{ formId:
   try {
     const resolvedParams = await context.params;
     const { formId } = resolvedParams;
-    const updatedFormDefinition = await request.json();
+    const { title, questions } = await request.json();
 
-    if (!formId || formId !== updatedFormDefinition.id) {
-      return NextResponse.json({ message: 'ID de formulario no coincide o falta' }, { status: 400 });
+    if (!formId || !title || !questions) {
+      return NextResponse.json({ message: 'Faltan datos del formulario (id, title, questions).' }, { status: 400 });
     }
 
-    const filePath = path.join(process.cwd(), 'data', 'forms', `${formId}.json`);
+    // Use a transaction to update the form and its questions
+    const updatedForm = await prisma.$transaction(async (tx) => {
+      // 1. Update the form's title
+      const form = await tx.form.update({
+        where: { id: formId },
+        data: { title },
+      });
 
-    // Ensure the form exists before updating
-    try {
-      await fs.access(filePath);
-    } catch (accessError) {
-      if ((accessError as NodeJS.ErrnoException).code === 'ENOENT') {
-        return NextResponse.json({ message: 'Formulario no encontrado para actualizar' }, { status: 404 });
-      }
-      throw accessError;
-    }
+      // 2. Delete all existing questions for this form
+      await tx.question.deleteMany({
+        where: { formId: formId },
+      });
 
-    await fs.writeFile(filePath, JSON.stringify(updatedFormDefinition, null, 2));
-    return NextResponse.json({ message: 'Formulario actualizado exitosamente', formId: updatedFormDefinition.id });
+      // 3. Create new questions
+      await tx.question.createMany({
+        data: questions.map((q: any) => ({
+          id: q.id,
+          text: q.text,
+          type: q.type,
+          options: q.options || [],
+          fixed: q.fixed || false,
+          formId: formId,
+        })),
+      });
+
+      return form;
+    });
+
+    return NextResponse.json({ message: 'Formulario actualizado exitosamente', formId: updatedForm.id });
   } catch (error) {
-    console.error('Error updating form:', error);
-    return NextResponse.json({ message: 'Error al actualizar el formulario' }, { status: 500 });
+    console.error('Error updating form in DB:', error);
+    return NextResponse.json({ message: 'Error al actualizar el formulario.' }, { status: 500 });
   }
 }
 
@@ -60,29 +71,18 @@ export async function DELETE(request: Request, context: { params: Promise<{ form
   try {
     const resolvedParams = await context.params;
     const { formId } = resolvedParams;
-    const filePath = path.join(process.cwd(), 'data', 'forms', `${formId}.json`);
-    const responsesDirectory = path.join(process.cwd(), 'data', 'responses', formId);
 
-    // Delete form file
-    try {
-      await fs.unlink(filePath);
-    } catch (unlinkError) {
-      if ((unlinkError as NodeJS.ErrnoException).code === 'ENOENT') {
-        return NextResponse.json({ message: 'Formulario no encontrado para eliminar' }, { status: 404 });
-      }
-      throw unlinkError;
+    const deletedForm = await prisma.form.delete({
+      where: { id: formId },
+    });
+
+    if (!deletedForm) {
+      return NextResponse.json({ message: 'Formulario no encontrado para eliminar' }, { status: 404 });
     }
 
-    // Delete associated responses directory if it exists
-    try {
-      await fs.rm(responsesDirectory, { recursive: true, force: true });
-    } catch (rmError) {
-      console.warn(`No se pudieron eliminar las respuestas para el formulario ${formId} (puede que no existieran):`, rmError);
-    }
-
-    return NextResponse.json({ message: 'Formulario y sus respuestas eliminados exitosamente' });
+    return NextResponse.json({ message: 'Formulario y sus datos asociados eliminados exitosamente' });
   } catch (error) {
-    console.error('Error deleting form:', error);
-    return NextResponse.json({ message: 'Error al eliminar el formulario' }, { status: 500 });
+    console.error('Error deleting form from DB:', error);
+    return NextResponse.json({ message: 'Error al eliminar el formulario.' }, { status: 500 });
   }
 }

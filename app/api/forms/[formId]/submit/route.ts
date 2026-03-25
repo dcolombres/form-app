@@ -1,12 +1,11 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs/promises';
-import path from 'path';
-import { v4 as uuidv4 } from 'uuid';
+import prisma from '@/lib/prisma'; // Import Prisma Client
 
 export async function POST(request: Request, context: { params: Promise<{ formId: string }> | { formId: string } }) {
-  const { formId } = await context.params;
-
   try {
+    const resolvedParams = await context.params;
+    const { formId } = resolvedParams;
+
     console.log('API Submit: Received formId:', formId);
 
     const { responses } = await request.json();
@@ -17,20 +16,18 @@ export async function POST(request: Request, context: { params: Promise<{ formId
       return NextResponse.json({ message: 'Form ID or responses missing' }, { status: 400 });
     }
 
-    const submissionId = uuidv4();
-    const formResponsesDir = path.join(process.cwd(), 'data', 'responses', formId);
-    const filePath = path.join(formResponsesDir, `${submissionId}.json`);
-    console.log('API Submit: Saving submission to:', filePath);
+    const newResponse = await prisma.response.create({
+      data: {
+        formId: formId,
+        data: responses, // Store the entire responses object as JSON
+      },
+    });
 
-    // Ensure the directory exists
-    await fs.mkdir(formResponsesDir, { recursive: true });
+    console.log('API Submit: Submission saved successfully:', newResponse.id);
 
-    await fs.writeFile(filePath, JSON.stringify(responses, null, 2));
-    console.log('API Submit: Submission saved successfully:', submissionId);
-
-    return NextResponse.json({ message: 'Form submitted successfully', submissionId });
+    return NextResponse.json({ message: 'Form submitted successfully', submissionId: newResponse.id });
   } catch (error) {
-    console.error('API Submit: Error submitting form:', error);
+    console.error('API Submit: Error submitting form to DB:', error);
     return NextResponse.json({ message: 'Error submitting form' }, { status: 500 });
   }
 }

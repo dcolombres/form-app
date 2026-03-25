@@ -3,13 +3,12 @@
 import { Navbar, Nav, Container } from "react-bootstrap";
 import Link from "next/link";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faWpforms } from '@fortawesome/free-brands-svg-icons';
-import { faHome, faPlusCircle, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import { faClipboardList, faHome, faPlusCircle, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-export default function AppNavbar() {
+export default function AppNavbar({ className }: { className?: string }) {
   const { isAdmin, logout } = useAuth();
   const router = useRouter();
 
@@ -20,10 +19,10 @@ export default function AppNavbar() {
   };
 
   return (
-    <Navbar style={{ backgroundColor: '#0288D1' }} variant="dark" expand="lg" className="shadow-sm mb-4">
+    <Navbar style={{ backgroundColor: '#0288D1' }} variant="dark" expand="lg" className={`shadow-sm mb-4 ${className || ''}`}>
       <Container>
         <Navbar.Brand as={Link} href={isAdmin ? "/" : "/login"} className="d-flex align-items-center fw-bold">
-          <FontAwesomeIcon icon={faWpforms} className="me-2 fs-3" />
+          <FontAwesomeIcon icon={faClipboardList} className="me-2 fs-3" />
           <span>FormMaster</span>
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
