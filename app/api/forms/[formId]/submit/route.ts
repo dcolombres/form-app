@@ -16,6 +16,17 @@ export async function POST(request: Request, context: { params: Promise<{ formId
       return NextResponse.json({ message: 'Form ID or responses missing' }, { status: 400 });
     }
 
+    // Verify formId exists
+    const formExists = await prisma.form.findUnique({
+      where: { id: formId },
+      select: { id: true }, // Only select the ID, no need for full form data
+    });
+
+    if (!formExists) {
+      console.log(`API Submit: Form with ID ${formId} not found, returning 404.`);
+      return NextResponse.json({ message: 'Form not found' }, { status: 404 });
+    }
+
     const newResponse = await prisma.response.create({
       data: {
         formId: formId,
@@ -26,8 +37,10 @@ export async function POST(request: Request, context: { params: Promise<{ formId
     console.log('API Submit: Submission saved successfully:', newResponse.id);
 
     return NextResponse.json({ message: 'Form submitted successfully', submissionId: newResponse.id });
-  } catch (error) {
-    console.error('API Submit: Error submitting form to DB:', error);
-    return NextResponse.json({ message: 'Error submitting form' }, { status: 500 });
+  } catch (error: any) { // Explicitly type error as 'any' for now to access properties
+    console.error('API Submit: Error submitting form to DB:', error.message || error);
+    // Log the full error object for more details
+    console.error('API Submit: Full error object:', error);
+    return NextResponse.json({ message: 'Error submitting form', error: error.message || 'Unknown error' }, { status: 500 });
   }
 }
