@@ -1,18 +1,22 @@
 import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
 
-// add prisma to the NodeJS global type
-// This declaration is needed for TypeScript to recognize `global.prisma`
+// Prisma v7: connection URL is passed via adapter, not via schema.prisma
 declare global {
   // eslint-disable-next-line no-var
   var prisma: PrismaClient | undefined;
 }
 
-// This is a common pattern to prevent multiple instances of Prisma Client in development
-// by attaching it to the global object.
-const prisma = global.prisma || new PrismaClient();
+function createPrismaClient() {
+  const connectionString = process.env.DATABASE_URL!;
+  const adapter = new PrismaPg({ connectionString });
+  return new PrismaClient({ adapter });
+}
 
-if (process.env.NODE_ENV === 'development') {
-  global.prisma = prisma;
+const prisma = globalThis.prisma ?? createPrismaClient();
+
+if (process.env.NODE_ENV !== 'production') {
+  globalThis.prisma = prisma;
 }
 
 export default prisma;
