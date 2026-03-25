@@ -11,7 +11,11 @@ import { Pool } from 'pg';
 
 function createPrismaClient() {
   const connectionString = process.env.DATABASE_URL!;
-  const pool = new Pool({ connectionString });
+  const pool = new Pool({
+    connectionString,
+    // Add explicit SSL options required by Supabase/Vercel
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : undefined,
+  });
   const adapter = new PrismaPg(pool);
   return new PrismaClient({ adapter });
 }
