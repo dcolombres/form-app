@@ -15,13 +15,18 @@ function createPrismaClient() {
   console.log('NODE_ENV:', process.env.NODE_ENV);
   console.log('------------------');
 
-  // Remove 'sslmode=require' as it conflicts with pg library's verification logic
-  // and prevents our explicit { rejectUnauthorized: false } from taking effect.
-  const connectionString = (process.env.DATABASE_URL || '').replace('sslmode=require', 'sslmode=no-verify');
+  // Eliminar cualquier parámetro sslmode de la URL si lo hubiera, 
+  // ya que a veces interfiere con la configuración 'ssl' que pasamos como objeto.
+  let connectionString = process.env.DATABASE_URL || '';
+  if (connectionString.includes('sslmode=')) {
+    connectionString = connectionString.replace(/sslmode=[^&]+&?/, '');
+  }
+
   const pool = new Pool({
     connectionString,
-    // Add explicit SSL options required by Supabase/Vercel
-    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : undefined,
+    // Forzamos incondicionalmente a omitir verificación de Authority
+    // para los certificados auto-firmados del Pooler de Supabase en IPv4.
+    ssl: { rejectUnauthorized: false },
   });
   const adapter = new PrismaPg(pool);
   return new PrismaClient({ adapter });
